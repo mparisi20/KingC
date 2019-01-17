@@ -1,3 +1,4 @@
+#include <stdio.h>
 extern int printf(const char *, ...);
 extern int getchar(void);
 extern double fmax(double, double);
@@ -17,7 +18,7 @@ int main(void)
 	printf("%c\n", ch);
 	/* funct(5); compiles, but then the linker can't find the definition! */
 
-	ch = (ch = getchar()) + ch; // UB?
+	// ch = (ch = getchar()) + ch; // UB... no sequence point between the assignment and usage of ch
 	printf("%d\n", ch);
 
 
@@ -78,8 +79,45 @@ typedef unsigned long ulong; // ulong will work with GENERIC_MAX
 #define STR2(x) STR(x) /* necessary so that __LINE__ and __FILE__ are evaluated before getting stringized */
 #define LINE_FILE "Line " STR2(__LINE__) " of file " STR2(__FILE__)
 const char *str = LINE_FILE;
+printf("%s\n", str);
 printf("%s\n", LINE_FILE);
-printf("%s\n", LINE_FILE);
+
+/*
+9.
+*/
+#define CHECK(x,y,n) ((x)>=0&&(x)<=(n)-1&&(y)>=0&&(y)<=(n)-1?1:0)
+
+#define MEDIAN(x,y,z) ((y)>=(x)&&(y)<=(z)||(y)>=(z)&&(y)<=(x)?(y): \
+						(x)>=(y)&&(x)<=(z)||(x)>=(z)&&(x)<=(y)?(x): \
+						 (z))
+						 
+#define POLYNOMIAL(x) (3*(x)*(x)*(x)*(x)*(x) + 2*(x)*(x)*(x)*(x) \
+						- 5*(x)*(x)*(x) - (x)*(x) + 7*(x) - 6)
+
+printf("%d\n", CHECK(4,-1,10));
+printf("%d\n", MEDIAN(1,7,81));
+printf("%f\n", POLYNOMIAL(5.0));
+/*
+10.
+A function evaluates its arguments only once, while a macro may
+evaluate its arguments any number of times. This creates problems
+for arguments with side effects, as in MAX(i++,j);
+11.
+*/
+#define ERROR(fmt,...) fprintf(stderr,fmt,__VA_ARGS__)
+	ERROR("Range error: index = %d and %d\n", 5, 4);
+/*
+12.
+c) and e) will fail, because M is defined
+13.
+b) output: N is undefined
+16.
+IDENT(foo) is PRAGMA(ident "foo") is _Pragma("ident \"foo\"")
+is #pragma ident "foo"
+
+
+*/	
+	
 	return 0;
 }
 
