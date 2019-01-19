@@ -3,7 +3,7 @@ extern int printf(const char *, ...);
 extern int getchar(void);
 extern double fmax(double, double);
 extern double sqrt(double); /* declare an external function using a C standard library identifier */
-extern int funct(int); /* declare an external function with no definition anywhere */
+//extern int funct(int); /* declare an external function with no definition anywhere */
 
 #undef sqrt /* defensive undef in case the library provides its own sqrt macro */
 #define sqrt(x) ((x)>=0?sqrt(x):0) /* our own sqrt(x) macro that evaluates to 0 for negative input */
@@ -16,7 +16,7 @@ int main(void)
 	printf("%c\n", ch);
 	ch = (getchar)(); /* guaranteed to be an actual function call, not a macro invocation */
 	printf("%c\n", ch);
-	/* funct(5); compiles, but then the linker can't find the definition! */
+	funct(5); // compiles, but then the linker can't find the definition!
 
 	// ch = (ch = getchar()) + ch; // UB... no sequence point between the assignment and usage of ch
 	printf("%d\n", ch);
